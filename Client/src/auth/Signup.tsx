@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { signupInputState } from "@/schema/userSchema"
+import { signupInputState, userSignupSchema } from "@/schema/userSchema"
 import {  Contact2Icon, Loader2, LockKeyhole, Mail, User2 } from "lucide-react"
 import { ChangeEvent, FormEvent, useState } from "react"
 import { Link } from "react-router-dom"
@@ -16,6 +16,10 @@ const Signup = () => {
         contact : "",
     });
 
+    const [errors ,setErrors] = useState<Partial <signupInputState> >({
+
+    })
+
     const changeEventHandler = (e:ChangeEvent<HTMLInputElement>) =>
         {
         const {name , value} = e.target ;setInput({...input , [name]: value})
@@ -23,6 +27,13 @@ const Signup = () => {
 
     const loginSubmitHandler = (e:FormEvent) => {
         e.preventDefault()
+        const result = userSignupSchema.safeParse(input)
+        if(!result.success){
+            const fieldErrors = result.error.formErrors.fieldErrors
+
+            setErrors(fieldErrors as Partial<signupInputState>)
+            return
+        }
         console.log(input)
     }
 
@@ -49,6 +60,7 @@ const Signup = () => {
                             onChange={changeEventHandler}
                             className="pl-10" />
                         <User2 className="absolute inset-y-2 left-2 text-gray-400 pointer-events-none" />
+                        {errors && <span className="text-sm text-red-700" > {errors.fullName}</span>}
                     </div>
                 </div>
 
@@ -62,6 +74,8 @@ const Signup = () => {
                             onChange={changeEventHandler}
                             className="pl-10" />
                         <Mail className="absolute inset-y-2 left-2 text-gray-400 pointer-events-none" />
+                        {errors && <span className="text-sm text-red-700" > {errors.email}</span>}
+
                     </div>
                 </div>
 
@@ -69,25 +83,29 @@ const Signup = () => {
                     <div className="relative">
                         <Input
                             type="password"
-                            placeholder=" password" 
+                            placeholder=" Enter password" 
                             name="password"
                             value = {input.password}
                             onChange={changeEventHandler}
                             className="pl-10" />
                         <LockKeyhole className="absolute inset-y-2 left-2 text-gray-400 pointer-events-none" />
+                        {errors && <span className="text-sm text-red-700" > {errors.password}</span>}
+
                     </div>
                 </div>
 
                 <div className="mb-4">
                     <div className="relative">
                         <Input
-                            type="contact"
+                            type="tel"
                             placeholder=" Contact" 
                             name="contact"
                             value = {input.contact}
                             onChange={changeEventHandler}
                             className="pl-10" />
                         <Contact2Icon className="absolute inset-y-2 left-2 text-gray-400 pointer-events-none" />
+                        {errors && <span className="text-sm text-red-700" > {errors.contact}</span>}
+
                     </div>
                 </div>
 

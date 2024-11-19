@@ -7,7 +7,7 @@ export const userSignupSchema = z.object({
 
     password : z.string().min(6,"Password is too short"),
 
-    contact : z.string().min(10,"Enter 10 digit contact Number")
+    contact : z.string().regex(/^\d{10}$/, "Enter a valid 10-digit contact number")
 })
 
 export type signupInputState= z.infer<typeof userSignupSchema>
